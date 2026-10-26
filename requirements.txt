@@ -1,0 +1,29 @@
+# —— FastAPI & Server ——
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.9
+
+# —— Database ——
+psycopg[binary]>=3.1.0
+psycopg-pool==3.2.8
+
+# —— Authentication ——
+python-jose[cryptography]>=3.3.0
+bcrypt>=4.1.0
+
+# —— Validation ——
+pydantic>=2.5.0
+email-validator>=2.1.0
+
+# —— WebSocket (/balance) ——
+websockets>=12.0
+# —— Storage (Cloudflare R2) ——
+boto3>=1.34.0
+# —— Utilities ——
+qrcode>=7.4.0
+Pillow>=10.0.0
+slowapi>=0.1.9
+httpx>=0.27.0
+psutil>=5.9.0
+#الحمد لله
+
