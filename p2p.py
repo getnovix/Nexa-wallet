@@ -481,6 +481,7 @@ def create_buy_ad(
             "تم إنشاء إعلان شراء USDT",
             "تم نشر إعلان شراء USDT بنجاح وأصبح متاحًا للمستخدمين."              
             )
+            )
             conn.commit()
             return {
                 "ok": True,
