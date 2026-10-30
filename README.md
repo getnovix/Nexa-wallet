@@ -258,3 +258,60 @@ I am sharing the project because I want my work to be visible, learn from other 
 Built in Sudan by Ibrahim.
 
 GitHub: https://github.com/getnovix/Nexa-wallet
+
+---
+
+Backend Reliability Improvement: Post-Commit Exception Handling
+
+During a review of Nexa's internal transfer logic, I identified an important reliability issue involving Python's "try" / "except Exception" handling after database transactions.
+
+The issue
+
+The original implementation placed the financial transaction and subsequent operations inside a single "try" block.
+
+After successfully executing the financial operations and calling "conn.commit()", additional operations were performed, including balance updates and API response preparation.
+
+If an exception occurred after the commit, the outer "except Exception" handler could catch it, execute "conn.rollback()", and return an error response.
+
+However, the database transaction had already been committed.
+
+At that point, calling "rollback()" could not reverse the completed financial operation.
+
+Why this matters
+
+The main problem is the inconsistency between the actual transaction result and the response presented to the user.
+
+For example:
+
+- A user initiates a transfer.
+- The database successfully processes and commits the transfer.
+- A subsequent operation raises an exception.
+- The API returns a failure message even though the transfer succeeded.
+
+This can negatively affect user trust and the perceived reliability of the platform.
+
+Users may believe that Nexa is unstable, that transfers frequently fail, or that something is wrong with the platform's financial system.
+
+It may also lead users to retry operations unnecessarily.
+
+The improvement
+
+The proposed solution is to separate post-commit operations from the main financial transaction's exception handling.
+
+The database transaction should be handled independently, while operations performed after a successful commit should have their own error-handling logic.
+
+This ensures that an exception occurring after a successful financial commit does not incorrectly cause the API to report the transfer as failed.
+
+The approach also needs to preserve proper idempotency so that repeated requests cannot create duplicate financial operations.
+
+What I learned
+
+This investigation reinforced an important backend engineering principle:
+
+The actual database transaction result must remain consistent with the result communicated to the user.
+
+A committed financial operation must not be reported as failed simply because a subsequent non-transactional operation encountered an exception.
+
+I am continuing to review similar exception-handling patterns across Nexa to improve its reliability and user experience.
+
+---
